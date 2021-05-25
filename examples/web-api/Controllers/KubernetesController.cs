@@ -37,5 +37,25 @@ namespace KubeInspector.Controllers
         return StatusCode (500);
       }
     }
+
+    [HttpGet]
+    [Route("namespaces")]
+    public async Task<IActionResult> GetNamespacesAsync()
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest ();
+      }
+
+      try
+      {
+        var namespaces = await _repository.GetNamespacesAsync();
+        return Ok (namespaces);
+      }
+      catch(Exception)
+      {
+        return StatusCode (500);
+      }
+    }
   }
 }

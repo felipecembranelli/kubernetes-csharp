@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model IEnumerable<web_ui.Models.NamespaceModel>    
+       
+@{    
+        ViewData["Title"] = "Namespaces";    
+    }    
+<h2>Namespaces</h2>    
+<p>    
+    <a asp-action="Link">Link</a>    
+</p>    
+<table class="table">    
+    <thead>    
+        <tr>    
+            <th>    
+                @Html.DisplayNameFor(model => model.Name)    
+            </th>    
+            <th></th>    
+        </tr>    
+    </thead>    
+    <tbody>    
+        @foreach (var item in Model)    
+{    
+            <tr>    
+                <td>    
+                    @Html.DisplayFor(modelItem => item.Name)    
+                </td>    
+                <td>    
+                    <a asp-action="Details" asp-route-id="@item.Name">Details</a>     
+                </td>    
+            </tr>    
+        }    
+    </tbody>    
+</table>   

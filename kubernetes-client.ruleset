@@ -88,7 +88,7 @@
     <Rule Id="SA1405" Action="None" />
 
     <!-- The last statement in a multi-line C# initializer or list is missing a trailing comma. https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1413.md -->
-    <Rule Id="SA1413" Action="Error" />
+    <Rule Id="SA1413" Action="Warning" />
 
     <!-- The name of a C# element does not begin with an upper-case letter. https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1300.md -->
     <Rule Id="SA1300" Action="None" />
@@ -256,7 +256,7 @@
     <Rule Id="CA1308" Action="None" />
 
     <!-- Identifiers should not contain underscores https://docs.microsoft.com/en-us/visualstudio/code-quality/CA1707 -->
-    <Rule Id="CA1707" Action="Error" />
+    <Rule Id="CA1707" Action="Warning" />
 
     <!-- Identifiers should have correct prefix https://docs.microsoft.com/en-us/visualstudio/code-quality/CA1715 -->
     <Rule Id="CA1715" Action="None" />
@@ -287,7 +287,7 @@
     <Rule Id="CA2000" Action="None" />
 
     <!-- Do not directly await a Task https://docs.microsoft.com/en-us/visualstudio/code-quality/CA2007 -->
-    <Rule Id="CA2007" Action="Error" />
+    <Rule Id="CA2007" Action="Warning" />
 
     <!-- Do not create tasks without passing a TaskScheduler https://docs.microsoft.com/en-us/visualstudio/code-quality/CA2008 -->
     <!-- TODO -->

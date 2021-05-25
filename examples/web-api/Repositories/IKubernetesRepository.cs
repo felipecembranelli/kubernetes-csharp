@@ -10,6 +10,7 @@ namespace KubeInspector.Repositories
   public interface IKubernetesRepository
   {
     Task<IEnumerable> GetPodsAsync(string ns = "default");
+    Task<IEnumerable> GetNamespacesAsync();
   }
 
   public class KubernetesRepository : IKubernetesRepository
@@ -18,9 +19,11 @@ namespace KubeInspector.Repositories
 
     public KubernetesRepository()
     {
-      _client = new Kubernetes(
-        KubernetesClientConfiguration.InClusterConfig()
-      );
+      // _client = new Kubernetes(
+      //   KubernetesClientConfiguration.InClusterConfig()
+      // );
+
+      _client = new Kubernetes(KubernetesClientConfiguration.BuildDefaultConfig());
     }
 
     public async Task<IEnumerable> GetPodsAsync(string ns = "default")
@@ -35,5 +38,17 @@ namespace KubeInspector.Repositories
             NodeName = p.Spec.NodeName
         });
     }
+
+    public async Task<IEnumerable> GetNamespacesAsync()
+    {
+      var ns = await _client.ListNamespaceAsync();
+      return ns
+        .Items
+        .Select(n => new NamespaceModel
+          {
+            Name = n.Metadata.Name
+        });
+    }
+
   }
 }
