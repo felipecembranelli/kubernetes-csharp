@@ -11,6 +11,7 @@ namespace web_ui.Repositories
   public class KubernetesRepository : IKubernetesRepository
   {
     private readonly Kubernetes _client;
+    private readonly KubernetesClientConfiguration _config;
 
     public KubernetesRepository()
     {
@@ -18,7 +19,19 @@ namespace web_ui.Repositories
       //   KubernetesClientConfiguration.InClusterConfig()
       // );
 
-      _client = new Kubernetes(KubernetesClientConfiguration.BuildDefaultConfig());
+      _config = KubernetesClientConfiguration.BuildDefaultConfig();
+
+      _client = new Kubernetes(_config);
+    }
+
+    public ClusterModel GetClusterInfo()
+    {
+        return new ClusterModel
+      {
+        BaseUri = _client.BaseUri.AbsoluteUri.ToString(),
+        Host = _config.Host,
+        CurrentContext = _config.CurrentContext,
+      };
     }
 
   public List<NodeModel> GetNodes()

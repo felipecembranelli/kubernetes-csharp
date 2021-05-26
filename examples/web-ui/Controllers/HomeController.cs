@@ -23,6 +23,28 @@ namespace web_ui.Controllers
             _repository = repository;
         }
 
+        [HttpGet]
+        [Route("cluster-info")]
+        public async Task<IActionResult> GetClusterInfo()
+        {
+            //return View();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest ();
+            }
+
+            try
+            {
+
+                var cluster = _repository.GetClusterInfo();
+                //return Ok (pods);
+                return View("ClusterInfo", cluster);
+            }
+            catch(Exception)
+            {
+                return StatusCode (500);
+            }
+        }
 
         [HttpGet]
         [Route("nodes")]

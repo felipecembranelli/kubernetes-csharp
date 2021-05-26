@@ -13,6 +13,7 @@ namespace web_ui.Repositories
     Task<IEnumerable> GetNamespacesAsync();
     Task<string> GetLogsByPodId(string podId);
     List<NodeModel> GetNodes();
+    ClusterModel GetClusterInfo();
   }
   
 }
