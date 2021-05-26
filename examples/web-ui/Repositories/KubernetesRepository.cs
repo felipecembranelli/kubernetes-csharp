@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using k8s;
 using web_ui.Models;
 using System.Collections;
+using k8s.Models;
 
 namespace web_ui.Repositories
 {
@@ -18,6 +19,33 @@ namespace web_ui.Repositories
       // );
 
       _client = new Kubernetes(KubernetesClientConfiguration.BuildDefaultConfig());
+    }
+
+  public List<NodeModel> GetNodes()
+    {
+      List<NodeModel> nodes = new List<NodeModel>();
+
+      k8s.Models.V1NodeList nodeList;
+
+      //    client.ListNamespacedPod("default");
+      //                 client.ListNode();
+      //                 client.ListNamespacedDeployment("default");
+
+      nodeList = _client.ListNode();
+
+      foreach (var item in nodeList.Items)
+      {
+        NodeModel n = new NodeModel 
+        {
+          Uid = item.Uid(),
+          HostName = item.Name(),
+          PodIP = item.Spec.PodCIDR,
+          Labels = item.Labels()
+        };
+        nodes.Add(n);
+      }
+
+      return nodes;
     }
 
     public async Task<IEnumerable> GetPodsAsync(string ns = "default")

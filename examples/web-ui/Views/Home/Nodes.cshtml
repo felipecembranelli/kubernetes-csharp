@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Nodes";
+}
+
+@model IEnumerable<web_ui.Models.NodeModel>    
+       
+@{    
+        ViewData["Title"] = "Nodes";    
+    }    
+<h2>Nodes</h2>    
+<p>    
+    <a asp-action="Link">Link</a>    
+</p>    
+<table class="table">    
+    <thead>    
+        <tr>
+            <th>    
+                @Html.DisplayNameFor(model => model.Uid)    
+            </th>    
+            <th>    
+                @Html.DisplayNameFor(model => model.PodIP)    
+            </th>        
+            <th>    
+                @Html.DisplayNameFor(model => model.HostName)    
+            </th>    
+            <th></th>    
+        </tr>    
+    </thead>    
+    <tbody>    
+        @foreach (var item in Model)    
+{    
+            <tr>    
+                <td>    
+                    @Html.DisplayFor(modelItem => item.Uid)    
+                </td>    
+                <td>    
+                    @Html.DisplayFor(modelItem => item.PodIP)    
+                </td>    
+                <td>    
+                    @Html.DisplayFor(modelItem => item.HostName)    
+                </td>    
+                <td>    
+                    <a asp-action="Details" asp-route-id="@item.Uid">Details</a>    
+                </td>    
+            </tr>    
+        }    
+    </tbody>    
+</table>   

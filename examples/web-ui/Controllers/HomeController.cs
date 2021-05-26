@@ -23,6 +23,30 @@ namespace web_ui.Controllers
             _repository = repository;
         }
 
+
+        [HttpGet]
+        [Route("nodes")]
+        public async Task<IActionResult> GetNodes()
+        {
+            //return View();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest ();
+            }
+
+            try
+            {
+
+                var nodes = _repository.GetNodes();
+                //return Ok (pods);
+                return View("Nodes", nodes);
+            }
+            catch(Exception)
+            {
+                return StatusCode (500);
+            }
+        }
+
         [HttpGet]
         [Route("pods/{ns}")]
         public async Task<IActionResult> GetPodsByNamespaces([FromQuery (Name = "ns")] string ns = "default")

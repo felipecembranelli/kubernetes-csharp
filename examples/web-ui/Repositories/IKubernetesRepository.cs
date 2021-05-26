@@ -12,6 +12,7 @@ namespace web_ui.Repositories
     Task<IEnumerable> GetPodsAsync(string ns = "default");
     Task<IEnumerable> GetNamespacesAsync();
     Task<string> GetLogsByPodId(string podId);
+    List<NodeModel> GetNodes();
   }
   
 }
