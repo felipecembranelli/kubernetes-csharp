@@ -3,7 +3,8 @@
 }
 
 @model IEnumerable<web_ui.Models.NamespaceModel>    
-       
+@using Microsoft.AspNetCore.Http;
+
 @{    
         ViewData["Title"] = "Namespaces";    
     }    
@@ -31,7 +32,17 @@
                     @Html.DisplayFor(modelItem => item.Name)    
                 </td>    
                 <td>    
-                    <a asp-action="Details" asp-route-id="@item.Name">Details</a>     
+                    @{
+                        if (item.DefaultNamespace==true)
+                        {
+                            <a asp-action="setnamespace" asp-route-ns="@item.Name">(Default)</a>
+                        }
+                        else
+                        {
+                            <a asp-action="setnamespace" asp-route-ns="@item.Name">Set as default</a>
+                        }
+                    }
+
                 </td>    
             </tr>    
         }    

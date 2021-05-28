@@ -1,6 +1,6 @@
 namespace web_ui.Models
 {
-  public class PodListModel
+  public class PodModel
   {
 
     public string Id { get; set; }

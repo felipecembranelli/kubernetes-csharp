@@ -10,10 +10,13 @@ namespace web_ui.Repositories
   public interface IKubernetesRepository
   {
     Task<IEnumerable> GetPodsAsync(string ns = "default");
-    Task<IEnumerable> GetNamespacesAsync();
+    Task<IEnumerable<NamespaceModel>> GetNamespacesAsync();
     Task<string> GetLogsByPodId(string podId);
     List<NodeModel> GetNodes();
     ClusterModel GetClusterInfo();
+    Task<IEnumerable> GetServicesByNamespace(string resourceNamespace);
+    Task<IEnumerable> GetDeploymentsByNamespace(string resourceNamespace);
+    Task<IEnumerable> GetReplicaSetByNamespace(string resourceNamespace);
   }
   
 }

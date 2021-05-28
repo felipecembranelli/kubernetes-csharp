@@ -40,10 +40,6 @@ namespace web_ui.Repositories
 
       k8s.Models.V1NodeList nodeList;
 
-      //    client.ListNamespacedPod("default");
-      //                 client.ListNode();
-      //                 client.ListNamespacedDeployment("default");
-
       nodeList = _client.ListNode();
 
       foreach (var item in nodeList.Items)
@@ -61,12 +57,72 @@ namespace web_ui.Repositories
       return nodes;
     }
 
+    public async Task<IEnumerable> GetServicesByNamespace(string resourceNamespace)
+    {
+      List<ServiceModel> resourceList = new List<ServiceModel>();
+
+      var apiGenericClient = new GenericClient(_config, "", "v1", "services");
+
+      var returnedList = await apiGenericClient.ListNamespacedAsync<V1ServiceList>(resourceNamespace).ConfigureAwait(false);
+
+      foreach (var item in returnedList.Items)
+      {
+        ServiceModel s = new ServiceModel
+        {
+          Name = item.Name()
+        };
+        resourceList.Add(s);
+      }
+
+      return resourceList;
+    }
+
+    public async Task<IEnumerable> GetDeploymentsByNamespace(string resourceNamespace)
+    {
+      List<DeploymentModel> resourceList = new List<DeploymentModel>();
+
+      var apiGenericClient = new GenericClient(_config, "apps", "v1", "deployments");
+
+      var returnedList = await apiGenericClient.ListNamespacedAsync<V1DeploymentList>(resourceNamespace).ConfigureAwait(false);
+
+      foreach (var item in returnedList.Items)
+      {
+        DeploymentModel d = new DeploymentModel
+        {
+          Name = item.Name()
+        };
+        resourceList.Add(d);
+      }
+
+      return resourceList;
+    }
+
+    public async Task<IEnumerable> GetReplicaSetByNamespace(string resourceNamespace)
+    {
+      List<ReplicaSetModel> resourceList = new List<ReplicaSetModel>();
+
+      var apiGenericClient = new GenericClient(_config, "apps", "v1", "replicasets");
+
+      var returnedList = await apiGenericClient.ListNamespacedAsync<V1ReplicaSetList>(resourceNamespace).ConfigureAwait(false);
+
+      foreach (var item in returnedList.Items)
+      {
+        ReplicaSetModel r = new ReplicaSetModel
+        {
+          Name = item.Name()
+        };
+        resourceList.Add(r);
+      }
+
+      return resourceList;
+    }
+
     public async Task<IEnumerable> GetPodsAsync(string ns = "default")
     {
       var pods = await _client.ListNamespacedPodAsync(ns);
       return pods
         .Items
-        .Select(p => new PodListModel
+        .Select(p => new PodModel
           {
             Name = p.Metadata.Name,
             Id = p.Metadata.Uid,
@@ -74,7 +130,7 @@ namespace web_ui.Repositories
         });
     }
 
-    public async Task<IEnumerable> GetNamespacesAsync()
+    public async Task<IEnumerable<NamespaceModel>> GetNamespacesAsync()
     {
       var ns = await _client.ListNamespaceAsync();
       return ns
@@ -107,9 +163,26 @@ namespace web_ui.Repositories
           pod.Metadata.Name,
           pod.Metadata.NamespaceProperty, follow: true).ConfigureAwait(false);
       var stream = response.Body;
-      //stream.CopyTo(Console.OpenStandardOutput());
 
-      return stream.ToString();
+            //stream.CopyTo())
+
+            // while (!stream.EndOfStream)
+            // {
+            //     Console.WriteLine(rdr.ReadLine());
+            // }
+
+            System.IO.StreamReader sr = new System.IO.StreamReader(stream, System.Text.Encoding.ASCII);  
+            // Use the stream. Remember when you are through with the stream to close it.  
+            
+            var text = sr.ReadToEnd();
+
+            sr.Close();  
+
+            return text;
+
+      
+
+      //return stream.ReadToEnd();
 
     }
 

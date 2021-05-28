@@ -5,8 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using web_ui.Models;
 using web_ui.Repositories;
+using Microsoft.AspNetCore.Http;
 
 namespace web_ui.Controllers
 {
@@ -17,10 +19,64 @@ namespace web_ui.Controllers
 
         private readonly IKubernetesRepository _repository;
 
+        private string _namespace;
+
         public HomeController(ILogger<HomeController> logger, IKubernetesRepository repository)
         {
             _logger = logger;
             _repository = repository;
+        }
+
+        [HttpGet]
+        [Route("setnamespace")]
+        public async Task<IActionResult> SetNamespace(string ns)
+        {
+            try
+            {
+                // if (string.IsNullOrEmpty(ns))
+                // {
+                HttpContext.Session.SetString("Namespace", ns);
+                // }
+
+                var namespaces = await _repository.GetNamespacesAsync();
+                
+                return View("Namespaces", SetDefaultNamespace(namespaces, ns));
+            }
+            catch(Exception)
+            {
+                return StatusCode (500);
+            }
+        }
+
+        private IEnumerable<web_ui.Models.NamespaceModel> SetDefaultNamespace(IEnumerable<web_ui.Models.NamespaceModel> namespaceList, string ns)
+        {
+            var returnList = new List<NamespaceModel>();
+
+
+            foreach (var item in namespaceList)
+            {
+                if (item.Name == ns)
+                    item.DefaultNamespace = true;
+                else
+                    item.DefaultNamespace = false;
+
+                returnList.Add(item);
+            }
+
+            return returnList;
+        }
+
+        private string GetDefaultNamespace() 
+        {
+            if (HttpContext.Session.GetString("Namespace")!=null)
+                _namespace = HttpContext.Session.GetString("Namespace");
+            else 
+            {
+                _namespace = "default";
+                HttpContext.Session.SetString("Namespace", _namespace);
+            }
+
+            return _namespace;
         }
 
         [HttpGet]
@@ -70,8 +126,8 @@ namespace web_ui.Controllers
         }
 
         [HttpGet]
-        [Route("pods/{ns}")]
-        public async Task<IActionResult> GetPodsByNamespaces([FromQuery (Name = "ns")] string ns = "default")
+        [Route("services")]
+        public async Task<IActionResult> GetServicesByNamespace()
         {
             //return View();
             if (!ModelState.IsValid)
@@ -81,7 +137,76 @@ namespace web_ui.Controllers
 
             try
             {
-                var pods = await _repository.GetPodsAsync (ns);
+                var services = await _repository.GetServicesByNamespace(GetDefaultNamespace());
+                //return Ok (pods);
+                return View("Services", services);
+            }
+            catch(Exception)
+            {
+                return StatusCode (500);
+            }
+        }
+
+        [HttpGet]
+        [Route("deployments")]
+        public async Task<IActionResult> GetDeploymentsByNamespace()
+        {
+            //return View();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest ();
+            }
+
+            try
+            {
+
+                var deployments = await _repository.GetDeploymentsByNamespace(GetDefaultNamespace());
+                
+                return View("Deployments", deployments);
+            }
+            catch(Exception)
+            {
+                return StatusCode (500);
+            }
+        }
+
+        [HttpGet]
+        [Route("replicasets")]
+        public async Task<IActionResult> GetReplicaSetByNamespace()
+        {
+            //return View();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest ();
+            }
+
+            try
+            {
+
+                var replicasets = await _repository.GetReplicaSetByNamespace(GetDefaultNamespace());
+                
+                return View("Replicasets", replicasets);
+            }
+            catch(Exception)
+            {
+                return StatusCode (500);
+            }
+        }
+
+
+        [HttpGet]
+        [Route("pods")]
+        public async Task<IActionResult> GetPodsByNamespaces()
+        {
+            //return View();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest ();
+            }
+
+            try
+            {
+                var pods = await _repository.GetPodsAsync (GetDefaultNamespace());
                 //return Ok (pods);
                 return View("Pods", pods);
             }
@@ -103,8 +228,17 @@ namespace web_ui.Controllers
 
             try
             {
+                if (HttpContext.Session.GetString("Namespace")!=null)
+                    _namespace = HttpContext.Session.GetString("Namespace");
+                else 
+                {
+                    _namespace = "default";
+                    HttpContext.Session.SetString("Namespace", _namespace);
+                }
+
                 var namespaces = await _repository.GetNamespacesAsync();
-                return View("Namespaces", namespaces);
+
+                return View("Namespaces", SetDefaultNamespace(namespaces, _namespace));
             }
             catch(Exception)
             {
@@ -113,7 +247,7 @@ namespace web_ui.Controllers
         }
 
         [HttpGet]
-        [Route("pods/logs/{podId}")]
+        [Route("pod/logs/{podId}")]
         public async Task<IActionResult> GetLogsByPod([FromQuery (Name = "podId")] string podId)
         {
             //return View();
@@ -125,6 +259,7 @@ namespace web_ui.Controllers
             try
             {
                 var text = await _repository.GetLogsByPodId ("pod1");
+
                 //return Ok (pods);
                 return View("PodLogs", text);
             }
