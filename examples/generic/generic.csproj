@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\KubernetesClient\KubernetesClient.csproj" />
+    <!-- <ProjectReference Include="..\..\src\KubernetesClient\KubernetesClient.csproj" /> -->
+    <PackageReference Include="KubernetesClient" Version="5.0.9" />
   </ItemGroup>
 
   <PropertyGroup>
